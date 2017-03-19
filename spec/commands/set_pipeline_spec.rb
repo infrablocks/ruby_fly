@@ -11,7 +11,7 @@ describe RubyFly::Commands::SetPipeline do
     RubyFly.reset!
   end
 
-  it 'calls the fly set-pipeline command pasing the required arguments' do
+  it 'calls the fly set-pipeline command passing the required arguments' do
     command = RubyFly::Commands::SetPipeline.new(binary: 'fly')
 
     expect(Open4).to(

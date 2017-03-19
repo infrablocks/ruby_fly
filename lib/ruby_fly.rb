@@ -16,8 +16,16 @@ module RubyFly
   end
 
   module ClassMethods
+    def get_pipeline(opts = {})
+      Commands::GetPipeline.new.execute(opts)
+    end
+
     def set_pipeline(opts = {})
       Commands::SetPipeline.new.execute(opts)
+    end
+
+    def unpause_pipeline(opts = {})
+      Commands::UnpausePipeline.new.execute(opts)
     end
   end
   extend ClassMethods
