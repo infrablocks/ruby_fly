@@ -1,5 +1,36 @@
-require "ruby_fly/version"
+require 'ruby_fly/version'
+require 'ruby_fly/commands'
 
 module RubyFly
-  # Your code goes here...
+  class << self
+    attr_accessor :configuration
+
+    def configure
+      @configuration ||= Configuration.new
+      yield(@configuration)
+    end
+
+    def reset!
+      @configuration = nil
+    end
+  end
+
+  module ClassMethods
+    def set_pipeline(opts = {})
+      Commands::SetPipeline.new.execute(opts)
+    end
+  end
+  extend ClassMethods
+
+  def self.included(other)
+    other.extend(ClassMethods)
+  end
+
+  class Configuration
+    attr_accessor :binary
+
+    def initialize
+      @binary = 'fly'
+    end
+  end
 end
