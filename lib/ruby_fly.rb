@@ -27,6 +27,10 @@ module RubyFly
     def unpause_pipeline(opts = {})
       Commands::UnpausePipeline.new.execute(opts)
     end
+
+    def version
+      Commands::Version.new.execute()
+    end
   end
   extend ClassMethods
 
