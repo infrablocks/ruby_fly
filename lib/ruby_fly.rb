@@ -29,7 +29,7 @@ module RubyFly
     end
 
     def version
-      Commands::Version.new.execute()
+      Commands::Version.new.execute
     end
   end
   extend ClassMethods
