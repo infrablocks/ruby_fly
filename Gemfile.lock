@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ruby_fly (0.4.2.pre1)
+    ruby_fly (0.5.0)
       lino (~> 1.1)
 
 GEM
