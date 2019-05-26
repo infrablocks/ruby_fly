@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ruby_fly (0.8.0.pre.pre.1)
+    ruby_fly (0.8.0.pre.pre.2)
       lino (~> 1.1)
 
 GEM
@@ -42,4 +42,4 @@ DEPENDENCIES
   ruby_fly!
 
 BUNDLED WITH
-   1.17.1
+   1.17.3
