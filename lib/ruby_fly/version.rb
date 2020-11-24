@@ -1,3 +1,3 @@
 module RubyFly
-  VERSION = '0.16.0.pre.1'
+  VERSION = '0.16.0.pre.2'
 end
