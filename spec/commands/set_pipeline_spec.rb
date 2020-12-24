@@ -126,4 +126,23 @@ describe RubyFly::Commands::SetPipeline do
         config: 'config/file.yml',
         non_interactive: true)
   end
+
+  it 'adds a team when supplied' do
+    command = RubyFly::Commands::SetPipeline.new
+
+    expect(Open4).to(
+        receive(:spawn)
+            .with('path/to/binary set-pipeline ' +
+                '-t=target ' +
+                '-p=pipeline ' +
+                '-c=config/file.yml ' +
+                '--team=team',
+                any_args))
+
+    command.execute(
+        target: 'target',
+        pipeline: 'pipeline',
+        config: 'config/file.yml',
+        team: 'team')
+  end
 end

@@ -59,4 +59,21 @@ describe RubyFly::Commands::UnpausePipeline do
                "Error: '#{required_parameter}' required but not provided.")
     end
   end
+
+  it 'adds a team when supplied' do
+    command = RubyFly::Commands::UnpausePipeline.new
+
+    expect(Open4).to(
+        receive(:spawn)
+            .with('path/to/binary unpause-pipeline ' +
+                '-t=target ' +
+                '-p=pipeline ' +
+                '--team=team',
+                any_args))
+
+    command.execute(
+        target: 'target',
+        pipeline: 'pipeline',
+        team: 'team')
+  end
 end

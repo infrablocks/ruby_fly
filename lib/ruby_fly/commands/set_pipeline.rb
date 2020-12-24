@@ -24,12 +24,14 @@ module RubyFly
         vars = opts[:vars] || {}
         var_files = opts[:var_files] || []
         non_interactive = opts[:non_interactive]
+        team = opts[:team]
 
         builder
           .with_subcommand('set-pipeline') do |sub|
             sub = sub.with_option('-t', target)
             sub = sub.with_option('-p', pipeline)
             sub = sub.with_option('-c', config)
+            sub = sub.with_option('--team', team) if team
             vars.each do |key, value|
               sub = sub.with_option('-v', "'#{key}=#{value}'")
             end

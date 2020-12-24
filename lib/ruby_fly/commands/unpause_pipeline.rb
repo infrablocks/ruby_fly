@@ -19,11 +19,13 @@ module RubyFly
 
         target = opts[:target]
         pipeline = opts[:pipeline]
+        team = opts[:team]
 
         builder
             .with_subcommand('unpause-pipeline') do |sub|
               sub = sub.with_option('-t', target)
               sub = sub.with_option('-p', pipeline)
+              sub = sub.with_option('--team', team) if team
               sub
             end
       end
