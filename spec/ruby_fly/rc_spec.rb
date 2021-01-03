@@ -101,37 +101,6 @@ RSpec.describe RubyFly::RC do
       end
     end
 
-    context '#remove_target' do
-      it 'removes the target from the RC when it exists' do
-        target_1_name = Build::Data.random_target_name
-        target_2_name = Build::Data.random_target_name
-
-        target_1 = Build::Data.random_target(name: target_1_name)
-        target_2 = Build::Data.random_target(name: target_2_name)
-
-        rc = RubyFly::RC.new(targets: [target_1, target_2])
-        rc.remove_target(target_2_name)
-
-        expect(rc.find_target(target_2_name)).to(be_nil)
-      end
-
-      it 'throws an exception when the target does not exist' do
-        target_1_name = Build::Data.random_target_name
-        target_2_name = Build::Data.random_target_name
-        target_3_name = Build::Data.random_target_name
-
-        target_1 = Build::Data.random_target(name: target_1_name)
-        target_2 = Build::Data.random_target(name: target_2_name)
-
-        rc = RubyFly::RC.new(targets: [target_1, target_2])
-
-        expect {
-          rc.remove_target(target_3_name)
-        }.to(raise_error(RubyFly::RC::TargetNotPresentError,
-            "Target with name: #{target_3_name} not present in RC."))
-      end
-    end
-
     context '#update_target' do
       it 'uses the provided block to update the target when it exists' do
         target_1_name = Build::Data.random_target_name
@@ -185,6 +154,67 @@ RSpec.describe RubyFly::RC do
       end
     end
 
+    context '#add_or_update_target' do
+      it 'uses the provided block to add the target when it does not exist' do
+        target_1_name = Build::Data.random_target_name
+        target_2_name = Build::Data.random_target_name
+
+        target_1 = Build::Data.random_target(name: target_1_name)
+        target_2 = Build::Data.random_target(name: target_2_name)
+
+        access_token = Build::Data.random_access_token
+
+        rc = RubyFly::RC.new(targets: [target_1])
+        rc.add_or_update_target(target_2_name) do |target|
+          target.api = "https://concourse.example.com"
+          target.team = :other_team
+          target.bearer_token = access_token
+        end
+
+        updated_target = rc.find_target(target_2_name)
+
+        expect(updated_target).to(eq(
+            RubyFly::RC::Target.new(
+                name: target_2_name,
+                api: "https://concourse.example.com",
+                team: :other_team,
+                token: {
+                    type: 'bearer',
+                    value: access_token
+                })
+        ))
+      end
+
+      it 'uses the provided block to update the target when it exists' do
+        target_1_name = Build::Data.random_target_name
+        target_2_name = Build::Data.random_target_name
+
+        target_1 = Build::Data.random_target(name: target_1_name)
+        target_2 = Build::Data.random_target(name: target_2_name)
+
+        access_token = Build::Data.random_access_token
+
+        rc = RubyFly::RC.new(targets: [target_1, target_2])
+        rc.add_or_update_target(target_2_name) do |target|
+          target.api = "https://concourse.example.com"
+          target.bearer_token = access_token
+        end
+
+        updated_target = rc.find_target(target_2_name)
+
+        expect(updated_target).to(eq(
+            RubyFly::RC::Target.new(
+                name: target_2_name,
+                api: "https://concourse.example.com",
+                team: target_2.team,
+                token: {
+                    type: 'bearer',
+                    value: access_token
+                })
+        ))
+      end
+    end
+
     context '#rename_target' do
       it 'renames the specified target when it exists' do
         target_1_name = Build::Data.random_target_name
@@ -215,6 +245,37 @@ RSpec.describe RubyFly::RC do
 
         expect {
           rc.rename_target(target_3_name, Build::Data.random_target_name)
+        }.to(raise_error(RubyFly::RC::TargetNotPresentError,
+            "Target with name: #{target_3_name} not present in RC."))
+      end
+    end
+
+    context '#remove_target' do
+      it 'removes the target from the RC when it exists' do
+        target_1_name = Build::Data.random_target_name
+        target_2_name = Build::Data.random_target_name
+
+        target_1 = Build::Data.random_target(name: target_1_name)
+        target_2 = Build::Data.random_target(name: target_2_name)
+
+        rc = RubyFly::RC.new(targets: [target_1, target_2])
+        rc.remove_target(target_2_name)
+
+        expect(rc.find_target(target_2_name)).to(be_nil)
+      end
+
+      it 'throws an exception when the target does not exist' do
+        target_1_name = Build::Data.random_target_name
+        target_2_name = Build::Data.random_target_name
+        target_3_name = Build::Data.random_target_name
+
+        target_1 = Build::Data.random_target(name: target_1_name)
+        target_2 = Build::Data.random_target(name: target_2_name)
+
+        rc = RubyFly::RC.new(targets: [target_1, target_2])
+
+        expect {
+          rc.remove_target(target_3_name)
         }.to(raise_error(RubyFly::RC::TargetNotPresentError,
             "Target with name: #{target_3_name} not present in RC."))
       end

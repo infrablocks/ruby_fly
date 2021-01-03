@@ -174,6 +174,15 @@ module RubyFly
       @targets[target_name] = updated_target
     end
 
+    def add_or_update_target(target_name, &block)
+      mutable_target = has_target?(target_name) ?
+          find_target(target_name) :
+          Target.new({name: target_name})
+      block.call(mutable_target)
+      updated_target = Target.clone(mutable_target, name: target_name)
+      @targets[target_name] = updated_target
+    end
+
     def rename_target(old_target_name, new_target_name)
       old_target = find_target(old_target_name)
       new_target = Target.clone(old_target, name: new_target_name)
