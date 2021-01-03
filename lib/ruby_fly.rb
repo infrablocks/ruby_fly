@@ -1,5 +1,6 @@
 require 'ruby_fly/version'
 require 'ruby_fly/commands'
+require 'ruby_fly/rc'
 
 module RubyFly
   class << self
