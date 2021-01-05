@@ -3,22 +3,13 @@ require 'lino'
 module RubyFly
   module Commands
     class Base
-      attr_reader :binary
+      attr_reader :binary, :stdin, :stdout, :stderr
 
       def initialize(binary: nil)
         @binary = binary || RubyFly.configuration.binary
-      end
-
-      def stdin
-        ''
-      end
-
-      def stdout
-        STDOUT
-      end
-
-      def stderr
-        STDERR
+        @stdin = stdin || RubyFly.configuration.stdin
+        @stdout = stdout || RubyFly.configuration.stdout
+        @stderr = stderr || RubyFly.configuration.stderr
       end
 
       def execute(opts = {})

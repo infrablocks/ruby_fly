@@ -24,6 +24,10 @@ module RubyFly
       Commands::Login.new.execute(opts)
     end
 
+    def status(opts = {})
+      Commands::Status.new.execute(opts)
+    end
+
     def get_pipeline(opts = {})
       Commands::GetPipeline.new.execute(opts)
     end
@@ -47,10 +51,13 @@ module RubyFly
   end
 
   class Configuration
-    attr_accessor :binary
+    attr_accessor :binary, :stdin, :stdout, :stderr
 
     def initialize
       @binary = 'fly'
+      @stdin = ''
+      @stdout = $stdout
+      @stderr = $stderr
     end
   end
 end
