@@ -20,6 +20,10 @@ module RubyFly
   end
 
   module ClassMethods
+    def login(opts = {})
+      Commands::Login.new.execute(opts)
+    end
+
     def get_pipeline(opts = {})
       Commands::GetPipeline.new.execute(opts)
     end
