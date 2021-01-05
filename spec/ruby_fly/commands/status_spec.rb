@@ -58,7 +58,7 @@ describe RubyFly::Commands::Status do
         receive(:spawn)
             .with('path/to/binary status ' +
                 '-t=target',
-                any_args)  { |_, opts|
+                any_args) { |_, opts|
               opts[:stdout].write("logged in successfully\n")
             })
 
@@ -74,8 +74,14 @@ describe RubyFly::Commands::Status do
         receive(:spawn)
             .with('path/to/binary status ' +
                 '-t=target',
-                any_args)  { |_, opts|
+                any_args) { |_, opts|
               opts[:stderr].write("logged out\n")
+              raise Open4::SpawnError.new(
+                  'cmd',
+                  double('status', {
+                      signaled?: false,
+                      exitstatus: 1
+                  }))
             })
 
     result = command.execute(target: 'target')
@@ -90,8 +96,14 @@ describe RubyFly::Commands::Status do
         receive(:spawn)
             .with('path/to/binary status ' +
                 '-t=target',
-                any_args)  { |_, opts|
+                any_args) { |_, opts|
               opts[:stderr].write("please login again.\n")
+              raise Open4::SpawnError.new(
+                  'cmd',
+                  double('status', {
+                      signaled?: false,
+                      exitstatus: 1
+                  }))
             })
 
     result = command.execute(target: 'target')
@@ -106,8 +118,14 @@ describe RubyFly::Commands::Status do
         receive(:spawn)
             .with('path/to/binary status ' +
                 '-t=target',
-                any_args)  { |_, opts|
+                any_args) { |_, opts|
               opts[:stderr].write("error: unknown target: target\n")
+              raise Open4::SpawnError.new(
+                  'cmd',
+                  double('status', {
+                      signaled?: false,
+                      exitstatus: 1
+                  }))
             })
 
     result = command.execute(target: 'target')
@@ -122,8 +140,14 @@ describe RubyFly::Commands::Status do
         receive(:spawn)
             .with('path/to/binary status ' +
                 '-t=target',
-                any_args)  { |_, opts|
+                any_args) { |_, opts|
               opts[:stderr].write("error: weird error\n")
+              raise Open4::SpawnError.new(
+                  'cmd',
+                  double('status', {
+                      signaled?: false,
+                      exitstatus: 1
+                  }))
             })
 
     result = command.execute(target: 'target')

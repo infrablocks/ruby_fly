@@ -16,12 +16,14 @@ module RubyFly
         builder = instantiate_builder
 
         do_before(opts)
-        configure_command(builder, opts)
-            .build
-            .execute(
-                stdin: stdin,
-                stdout: stdout,
-                stderr: stderr)
+        do_around(opts) do |new_opts|
+          configure_command(builder, new_opts)
+              .build
+              .execute(
+                  stdin: stdin,
+                  stdout: stdout,
+                  stderr: stderr)
+        end
         do_after(opts)
       end
 
@@ -32,6 +34,10 @@ module RubyFly
       end
 
       def do_before(opts)
+      end
+
+      def do_around(opts, &block)
+        block.call(opts)
       end
 
       def configure_command(builder, opts)

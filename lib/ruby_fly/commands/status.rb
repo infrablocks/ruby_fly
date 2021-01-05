@@ -38,6 +38,14 @@ module RubyFly
           end
       end
 
+      def do_around(opts, &block)
+        begin
+          block.call(opts)
+        rescue Open4::SpawnError => e
+          raise e unless e.status.exitstatus == 1
+        end
+      end
+
       def do_after(opts)
         output = stdout.string
         error = stderr.string
