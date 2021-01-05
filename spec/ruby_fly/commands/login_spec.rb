@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+require_relative '../../support/shared_examples/environment_support'
+
 describe RubyFly::Commands::Login do
   before(:each) do
     RubyFly.configure do |config|
@@ -34,6 +36,9 @@ describe RubyFly::Commands::Login do
 
     command.execute(target: 'target')
   end
+
+  it_behaves_like("a command with environment support",
+      'login', ["-t=target"], {target: 'target'}, 'path/to/binary')
 
   it 'throws ArgumentError if target is missing' do
     command = RubyFly::Commands::Login.new

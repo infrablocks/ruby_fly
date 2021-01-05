@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+require_relative '../../support/shared_examples/environment_support'
+
 describe RubyFly::Commands::UnpausePipeline do
   before(:each) do
     RubyFly.configure do |config|
@@ -40,6 +42,12 @@ describe RubyFly::Commands::UnpausePipeline do
         target: 'target',
         pipeline: 'pipeline')
   end
+
+  it_behaves_like("a command with environment support",
+      'unpause-pipeline',
+      ["-t=target", "-p=pipeline"],
+      {target: 'target', pipeline: 'pipeline'},
+      'path/to/binary')
 
   it 'throws ArgumentError if target or pipeline are missing' do
     command = RubyFly::Commands::UnpausePipeline.new

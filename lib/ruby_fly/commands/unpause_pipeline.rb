@@ -1,10 +1,15 @@
 require 'lino'
 require_relative 'base'
+require_relative 'mixins/environment'
 
 module RubyFly
   module Commands
     class UnpausePipeline < Base
+      include Mixins::Environment
+
       def configure_command(builder, opts)
+        builder = super(builder, opts)
+
         missing_params = [
             :target,
             :pipeline

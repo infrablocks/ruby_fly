@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+require_relative '../../support/shared_examples/environment_support'
+
 describe RubyFly::Commands::GetPipeline do
   before(:each) do
     RubyFly.configure do |config|
@@ -40,6 +42,12 @@ describe RubyFly::Commands::GetPipeline do
         target: 'target',
         pipeline: 'pipeline')
   end
+
+  it_behaves_like("a command with environment support",
+      'get-pipeline',
+      ["-t=target", "-p=pipeline"],
+      {target: 'target', pipeline: 'pipeline'},
+      'path/to/binary')
 
   it 'throws ArgumentError if target or pipeline are missing' do
     command = RubyFly::Commands::GetPipeline.new

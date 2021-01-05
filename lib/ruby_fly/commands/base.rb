@@ -44,6 +44,7 @@ module RubyFly
       end
 
       def configure_command(builder, opts)
+        builder
       end
 
       def do_after(opts)
