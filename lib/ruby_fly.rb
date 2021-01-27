@@ -40,6 +40,10 @@ module RubyFly
       Commands::UnpausePipeline.new.execute(opts)
     end
 
+    def destroy_pipeline(opts = {})
+      Commands::DestroyPipeline.new.execute(opts)
+    end
+
     def version
       Commands::Version.new.execute
     end

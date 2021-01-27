@@ -3,6 +3,7 @@ require_relative 'commands/status'
 require_relative 'commands/get_pipeline'
 require_relative 'commands/set_pipeline'
 require_relative 'commands/unpause_pipeline'
+require_relative 'commands/destroy_pipeline'
 require_relative 'commands/version'
 
 module RubyFly
