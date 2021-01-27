@@ -24,11 +24,15 @@ module RubyFly
 
         target = opts[:target]
         pipeline = opts[:pipeline]
+        non_interactive = opts[:non_interactive]
+        team = opts[:team]
 
         builder
             .with_subcommand('destroy-pipeline') do |sub|
               sub = sub.with_option('-t', target)
               sub = sub.with_option('-p', pipeline)
+              sub = sub.with_option('--team', team) if team
+              sub = sub.with_flag('-n') if non_interactive
               sub
             end
       end

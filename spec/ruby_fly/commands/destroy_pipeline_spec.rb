@@ -67,4 +67,38 @@ describe RubyFly::Commands::DestroyPipeline do
                "Error: '#{required_parameter}' required but not provided.")
     end
   end
+
+  it 'adds a non-interactive flag when non interactive supplied' do
+    command = RubyFly::Commands::DestroyPipeline.new
+
+    expect(Open4).to(
+        receive(:spawn)
+            .with('path/to/binary destroy-pipeline ' +
+                '-t=target ' +
+                '-p=pipeline ' +
+                '-n',
+                any_args))
+
+    command.execute(
+        target: 'target',
+        pipeline: 'pipeline',
+        non_interactive: true)
+  end
+
+  it 'adds a team when supplied' do
+    command = RubyFly::Commands::DestroyPipeline.new
+
+    expect(Open4).to(
+        receive(:spawn)
+            .with('path/to/binary destroy-pipeline ' +
+                '-t=target ' +
+                '-p=pipeline ' +
+                '--team=team',
+                any_args))
+
+    command.execute(
+        target: 'target',
+        pipeline: 'pipeline',
+        team: 'team')
+  end
 end
