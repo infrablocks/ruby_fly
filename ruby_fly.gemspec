@@ -6,12 +6,12 @@ require 'ruby_fly/version'
 Gem::Specification.new do |spec|
   spec.name = 'ruby_fly'
   spec.version = RubyFly::VERSION
-  spec.authors = ['Toby Clemson']
-  spec.email = ['tobyclemson@gmail.com']
+  spec.authors = ['InfraBlocks Maintainers']
+  spec.email = ['maintainers@infrablocks.io']
 
   spec.summary = 'A simple Ruby wrapper for invoking fly commands.'
   spec.description = 'Wraps the concourse fly CLI so that fly can be invoked from a Ruby script or Rakefile.'
-  spec.homepage = 'https://github.com/tobyclemson/ruby_fly'
+  spec.homepage = 'https://github.com/infrablocks/ruby_fly'
   spec.license = 'MIT'
 
   spec.files = `git ls-files -z`.split("\x0").select do |f|
