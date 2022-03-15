@@ -2,7 +2,7 @@ module RubyFly
   module Commands
     module Mixins
       module Environment
-        def initialize(opts={})
+        def initialize(opts = {})
           super(opts)
           @environment = opts[:environment]
         end

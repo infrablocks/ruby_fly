@@ -5,8 +5,8 @@ module RubyFly
     class Base
       attr_reader :binary, :stdin, :stdout, :stderr
 
-      def initialize(binary: nil)
-        @binary = binary || RubyFly.configuration.binary
+      def initialize(opts = {})
+        @binary = opts[:binary] || RubyFly.configuration.binary
         @stdin = stdin || RubyFly.configuration.stdin
         @stdout = stdout || RubyFly.configuration.stdout
         @stderr = stderr || RubyFly.configuration.stderr
