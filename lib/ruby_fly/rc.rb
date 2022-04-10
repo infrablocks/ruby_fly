@@ -1,44 +1,24 @@
+# frozen_string_literal: true
+
 require 'fileutils'
 
 module RubyFly
   class RC
     module Conversions
       def self.symbolize_keys(hash)
-        hash.inject({}) { |result, (key, value)|
-          new_key = case key
-          when String then
-            key.to_sym
-          else
-            key
-          end
-          new_value = case value
-          when Hash then
-            symbolize_keys(value)
-          else
-            value
-          end
+        hash.each_with_object({}) do |(key, value), result|
+          new_key = key.is_a?(String) ? key.to_sym : key
+          new_value = value.is_a?(Hash) ? symbolize_keys(value) : value
           result[new_key] = new_value
-          result
-        }
+        end
       end
 
       def self.stringify_keys(hash)
-        hash.inject({}) { |result, (key, value)|
-          new_key = case key
-          when Symbol then
-            key.to_s
-          else
-            key
-          end
-          new_value = case value
-          when Hash then
-            stringify_keys(value)
-          else
-            value
-          end
+        hash.each_with_object({}) do |(key, value), result|
+          new_key = key.is_a?(Symbol) ? key.to_s : key
+          new_value = value.is_a?(Hash) ? stringify_keys(value) : value
           result[new_key] = new_value
-          result
-        }
+        end
       end
     end
 
@@ -55,18 +35,18 @@ module RubyFly
     end
 
     class Target
-      attr_reader :name, :api, :team, :token
-      attr_writer :api, :team, :token
+      attr_accessor :api, :team, :token
+      attr_reader :name
 
       def self.clone(target, overrides = {})
-        if target.nil?
-          return target
-        end
+        return target if target.nil?
+
         Target.new(
-            name: overrides[:name] || target.name,
-            api: overrides[:api] || target.api,
-            team: overrides[:team] || target.team,
-            token: overrides[:token] || target.token)
+          name: overrides[:name] || target.name,
+          api: overrides[:api] || target.api,
+          team: overrides[:team] || target.team,
+          token: overrides[:token] || target.token
+        )
       end
 
       def initialize(parameters)
@@ -78,25 +58,22 @@ module RubyFly
 
       def bearer_token=(value)
         @token = {
-            type: 'bearer',
-            value: value
+          type: 'bearer',
+          value: value
         }
       end
 
       def bearer_token
-        @token[:type] == 'bearer' ?
-            @token[:value] :
-            nil
+        @token[:value] if @token[:type] == 'bearer'
       end
 
       def encode_with(coder)
         coder.represent_map(
-            nil,
-            RubyFly::RC::Conversions.stringify_keys({
-                api: @api,
-                team: @team.to_s,
-                token: @token
-            }))
+          nil,
+          RubyFly::RC::Conversions.stringify_keys(
+            { api: @api, team: @team.to_s, token: @token }
+          )
+        )
       end
 
       def ==(other)
@@ -123,18 +100,30 @@ module RubyFly
       name = options[:name] || '.flyrc'
       path = File.join(home, name)
 
-      contents = options[:contents] ||
-          (File.exist?(path) ?
-              RubyFly::RC::Conversions.symbolize_keys(YAML.load_file(path)) :
-              {})
-      targets = File.exist?(path) ?
-          contents[:targets].map { |n, t| Target.new(t.merge(name: n)) } :
-          []
+      contents = options[:contents] || try_load_rc_file_contents(path) || {}
+      targets = try_load_rc_file_targets(path, contents) || []
 
-      RubyFly::RC.new(
-          home: home,
-          name: name,
-          targets: targets)
+      RubyFly::RC.new(home: home, name: name, targets: targets)
+    end
+
+    class << self
+      private
+
+      def rc_file_exists?(path)
+        File.exist?(path)
+      end
+
+      def try_load_rc_file_contents(path)
+        return unless rc_file_exists?(path)
+
+        RubyFly::RC::Conversions.symbolize_keys(YAML.load_file(path))
+      end
+
+      def try_load_rc_file_targets(path, contents)
+        return unless rc_file_exists?(path)
+
+        contents[:targets].map { |n, t| Target.new(t.merge(name: n)) }
+      end
     end
 
     def initialize(options)
@@ -149,25 +138,23 @@ module RubyFly
       @targets.values
     end
 
+    def target?(target_name)
+      @targets.key?(target_name)
+    end
+
     def find_target(target_name)
       Target.clone(@targets[target_name.to_sym])
     end
 
-    def has_target?(target_name)
-      @targets.has_key?(target_name)
-    end
-
     def add_target(target)
-      if has_target?(target.name)
-        raise TargetAlreadyPresentError.new(target.name)
-      end
+      raise TargetAlreadyPresentError, target.name if target?(target.name)
+
       @targets[target.name] = target
     end
 
     def update_target(target_name, &block)
-      unless has_target?(target_name)
-        raise TargetNotPresentError.new(target_name)
-      end
+      raise TargetNotPresentError, target_name unless target?(target_name)
+
       mutable_target = find_target(target_name)
       block.call(mutable_target)
       updated_target = Target.clone(mutable_target, name: target_name)
@@ -175,9 +162,11 @@ module RubyFly
     end
 
     def add_or_update_target(target_name, &block)
-      mutable_target = has_target?(target_name) ?
-          find_target(target_name) :
-          Target.new({name: target_name})
+      mutable_target = if target?(target_name)
+                         find_target(target_name)
+                       else
+                         Target.new({ name: target_name })
+                       end
       block.call(mutable_target)
       updated_target = Target.clone(mutable_target, name: target_name)
       @targets[target_name] = updated_target
@@ -191,23 +180,20 @@ module RubyFly
     end
 
     def remove_target(target_name)
-      unless has_target?(target_name)
-        raise TargetNotPresentError.new(target_name)
-      end
+      raise TargetNotPresentError, target_name unless target?(target_name)
+
       @targets.delete(target_name)
     end
 
     def to_yaml
       RubyFly::RC::Conversions
-          .stringify_keys({targets: @targets})
-          .to_yaml
+        .stringify_keys({ targets: @targets })
+        .to_yaml
     end
 
     def write!
       FileUtils.mkdir_p(@home)
-      File.open(File.join(@home, @name), 'w') do |file|
-        file.write(to_yaml)
-      end
+      File.write(File.join(@home, @name), to_yaml)
     end
   end
 end

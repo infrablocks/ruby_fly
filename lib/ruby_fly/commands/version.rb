@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'lino'
 require_relative 'base'
 
@@ -8,15 +10,15 @@ module RubyFly
         @version_string
       end
 
-      def do_before(opts)
+      def do_before(_opts)
         @version_string = StringIO.new
       end
 
-      def configure_command(builder, opts)
+      def configure_command(builder, _opts)
         builder.with_flag('--version')
       end
 
-      def do_after(opts)
+      def do_after(_opts)
         @version_string.string.gsub(/\n/, '')
       end
     end

@@ -1,13 +1,17 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe RubyFly::Commands::Version do
   it 'calls the fly command passing the version flag' do
-    command = RubyFly::Commands::Version.new(binary: 'fly')
+    command = described_class.new(binary: 'fly')
 
-    expect(Open4).to(
-        receive(:spawn)
+    allow(Open4).to(receive(:spawn))
+
+    command.execute
+
+    expect(Open4)
+      .to(have_received(:spawn)
             .with('fly --version', any_args))
-
-    command.execute()
   end
 end

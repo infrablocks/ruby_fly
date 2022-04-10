@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faker'
 
 module Build
@@ -16,8 +18,8 @@ module Build
 
     def self.random_token(overrides = {})
       {
-          type: 'bearer',
-          value: self.random_access_token
+        type: 'bearer',
+        value: random_access_token
       }.merge(overrides)
     end
 
@@ -27,17 +29,18 @@ module Build
 
     def self.random_target_data(overrides = {})
       {
-          api: self.random_concourse_url,
-          team: self.random_team_name,
-          token: self.random_token
+        api: random_concourse_url,
+        team: random_team_name,
+        token: random_token
       }.merge(overrides)
     end
 
     def self.random_target(overrides = {})
       RubyFly::RC::Target.new(
-          self.random_target_data
-              .merge(name: self.random_target_name)
-              .merge(overrides))
+        random_target_data
+            .merge(name: random_target_name)
+            .merge(overrides)
+      )
     end
   end
 end

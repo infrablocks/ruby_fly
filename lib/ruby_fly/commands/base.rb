@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'lino'
 
 module RubyFly
@@ -13,39 +15,32 @@ module RubyFly
       end
 
       def execute(opts = {})
-        builder = instantiate_builder
-
         do_before(opts)
         do_around(opts) do |new_opts|
-          configure_command(builder, new_opts)
-              .build
-              .execute(
-                  stdin: stdin,
-                  stdout: stdout,
-                  stderr: stderr)
+          configure_command(instantiate_builder, new_opts)
+            .build
+            .execute(stdin: stdin, stdout: stdout, stderr: stderr)
         end
         do_after(opts)
       end
 
       def instantiate_builder
         Lino::CommandLineBuilder
-            .for_command(binary)
-            .with_option_separator('=')
+          .for_command(binary)
+          .with_option_separator('=')
       end
 
-      def do_before(opts)
-      end
+      def do_before(opts); end
 
       def do_around(opts, &block)
         block.call(opts)
       end
 
-      def configure_command(builder, opts)
+      def configure_command(builder, _opts)
         builder
       end
 
-      def do_after(opts)
-      end
+      def do_after(opts); end
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ruby_fly/version'
 require 'ruby_fly/commands'
 require 'ruby_fly/rc'
@@ -32,9 +34,11 @@ module RubyFly
       Commands::GetPipeline.new.execute(opts)
     end
 
+    # rubocop:disable Naming/AccessorMethodName
     def set_pipeline(opts = {})
       Commands::SetPipeline.new.execute(opts)
     end
+    # rubocop:enable Naming/AccessorMethodName
 
     def unpause_pipeline(opts = {})
       Commands::UnpausePipeline.new.execute(opts)

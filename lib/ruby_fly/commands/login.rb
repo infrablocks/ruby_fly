@@ -1,41 +1,61 @@
+# frozen_string_literal: true
+
 require 'lino'
 require_relative 'base'
 require_relative 'mixins/environment'
+require_relative 'mixins/required_params'
 
 module RubyFly
   module Commands
     class Login < Base
       include Mixins::Environment
+      include Mixins::RequiredParams
 
       def configure_command(builder, opts)
         builder = super(builder, opts)
-
-        missing_params = [
-            :target
-        ].select { |param| opts[param].nil? }
-
-        unless missing_params.empty?
-          description = missing_params.map { |p| "'#{p}'" }.join(', ')
-          raise(
-              ArgumentError,
-              "Error: #{description} required but not provided.")
-        end
-
-        target = opts[:target]
-        concourse_url = opts[:concourse_url]
-        username = opts[:username]
-        password = opts[:password]
-        team = opts[:team]
-
         builder
           .with_subcommand('login') do |sub|
-            sub = sub.with_option('-t', target)
-            sub = sub.with_option('-c', concourse_url) if concourse_url
-            sub = sub.with_option('-u', username) if username
-            sub = sub.with_option('-p', password) if password
-            sub = sub.with_option('-n', team) if team
+            sub = with_target(sub, opts[:target])
+            sub = with_concourse_url(sub, opts[:concourse_url])
+            sub = with_username(sub, opts[:username])
+            sub = with_password(sub, opts[:password])
+            sub = with_team(sub, opts[:team])
             sub
           end
+      end
+
+      private
+
+      def required_params
+        %i[target]
+      end
+
+      def with_target(builder, target)
+        builder.with_option('-t', target)
+      end
+
+      def with_concourse_url(builder, concourse_url)
+        return builder unless concourse_url
+
+        builder.with_option('-c', concourse_url)
+      end
+
+      def with_username(builder, username)
+        return builder unless username
+
+        builder.with_option('-u', username)
+      end
+
+      def with_password(builder, password)
+        return builder unless password
+
+        builder.with_option('-p', password)
+      end
+
+      def with_team(builder, team)
+        return builder unless team
+
+        builder.with_option('-n', team)
       end
     end
   end

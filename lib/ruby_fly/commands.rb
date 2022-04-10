@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'commands/login'
 require_relative 'commands/status'
 require_relative 'commands/get_pipeline'
