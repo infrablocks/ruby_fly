@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.email = ['maintainers@infrablocks.io']
 
   spec.summary = 'A simple Ruby wrapper for invoking fly commands.'
-  spec.description = 'Wraps the concourse fly CLI so that fly can be invoked '\
+  spec.description = 'Wraps the concourse fly CLI so that fly can be invoked ' \
                      'from a Ruby script or Rakefile.'
   spec.homepage = 'https://github.com/infrablocks/ruby_fly'
   spec.license = 'MIT'

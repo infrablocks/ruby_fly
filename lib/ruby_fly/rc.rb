@@ -96,7 +96,7 @@ module RubyFly
     end
 
     def self.load(options)
-      home = options[:home] || ENV['HOME']
+      home = options[:home] || Dir.home
       name = options[:name] || '.flyrc'
       path = File.join(home, name)
 
@@ -127,7 +127,7 @@ module RubyFly
     end
 
     def initialize(options)
-      @home = options[:home] || ENV['HOME']
+      @home = options[:home] || Dir.home
       @name = options[:name] || '.flyrc'
       @targets = options[:targets].inject({}) do |acc, target|
         acc.merge(target.name => target)
