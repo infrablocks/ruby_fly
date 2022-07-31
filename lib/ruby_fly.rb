@@ -34,11 +34,9 @@ module RubyFly
       Commands::GetPipeline.new.execute(opts)
     end
 
-    # rubocop:disable Naming/AccessorMethodName
     def set_pipeline(opts = {})
       Commands::SetPipeline.new.execute(opts)
     end
-    # rubocop:enable Naming/AccessorMethodName
 
     def unpause_pipeline(opts = {})
       Commands::UnpausePipeline.new.execute(opts)

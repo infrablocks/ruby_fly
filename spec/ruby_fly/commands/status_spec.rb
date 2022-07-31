@@ -82,7 +82,7 @@ describe RubyFly::Commands::Status do
     command = described_class.new
 
     status = instance_double(
-      'status', {
+      status, {
         signaled?: false,
         exitstatus: 1
       }
@@ -107,7 +107,7 @@ describe RubyFly::Commands::Status do
     command = described_class.new
 
     status = instance_double(
-      'status', {
+      status, {
         signaled?: false,
         exitstatus: 1
       }
@@ -132,7 +132,7 @@ describe RubyFly::Commands::Status do
     command = described_class.new
 
     status = instance_double(
-      'status', {
+      status, {
         signaled?: false,
         exitstatus: 1
       }
@@ -157,7 +157,7 @@ describe RubyFly::Commands::Status do
     command = described_class.new
 
     status = instance_double(
-      'status', {
+      status, {
         signaled?: false,
         exitstatus: 1
       }
