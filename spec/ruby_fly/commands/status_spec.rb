@@ -78,11 +78,12 @@ describe RubyFly::Commands::Status do
   # rubocop:enable RSpec/MultipleExpectations
 
   # rubocop:disable RSpec/MultipleExpectations
+  # rubocop:disable RSpec/VerifiedDoubleReference
   it 'converts the output to a symbol and returns when logged out' do
     command = described_class.new
 
     status = instance_double(
-      status, {
+      'signal', {
         signaled?: false,
         exitstatus: 1
       }
@@ -100,14 +101,16 @@ describe RubyFly::Commands::Status do
             .with('path/to/binary status -t=target', any_args))
     expect(result).to(eq(:logged_out))
   end
+  # rubocop:enable RSpec/VerifiedDoubleReference
   # rubocop:enable RSpec/MultipleExpectations
 
   # rubocop:disable RSpec/MultipleExpectations
+  # rubocop:disable RSpec/VerifiedDoubleReference
   it 'converts the output to a symbol and returns when session expired' do
     command = described_class.new
 
     status = instance_double(
-      status, {
+      'signal', {
         signaled?: false,
         exitstatus: 1
       }
@@ -125,14 +128,16 @@ describe RubyFly::Commands::Status do
             .with('path/to/binary status -t=target', any_args))
     expect(result).to(eq(:session_expired))
   end
+  # rubocop:enable RSpec/VerifiedDoubleReference
   # rubocop:enable RSpec/MultipleExpectations
 
   # rubocop:disable RSpec/MultipleExpectations
+  # rubocop:disable RSpec/VerifiedDoubleReference
   it 'converts the output to a symbol and returns when target unknown' do
     command = described_class.new
 
     status = instance_double(
-      status, {
+      'signal', {
         signaled?: false,
         exitstatus: 1
       }
@@ -150,14 +155,16 @@ describe RubyFly::Commands::Status do
             .with('path/to/binary status -t=target', any_args))
     expect(result).to(eq(:unknown_target))
   end
+  # rubocop:enable RSpec/VerifiedDoubleReference
   # rubocop:enable RSpec/MultipleExpectations
 
   # rubocop:disable RSpec/MultipleExpectations
+  # rubocop:disable RSpec/VerifiedDoubleReference
   it 'converts the output to a symbol and returns when unknown status' do
     command = described_class.new
 
     status = instance_double(
-      status, {
+      'signal', {
         signaled?: false,
         exitstatus: 1
       }
@@ -175,5 +182,6 @@ describe RubyFly::Commands::Status do
             .with('path/to/binary status -t=target', any_args))
     expect(result).to(eq(:unknown_status))
   end
+  # rubocop:enable RSpec/VerifiedDoubleReference
   # rubocop:enable RSpec/MultipleExpectations
 end
