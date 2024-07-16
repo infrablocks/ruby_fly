@@ -5,42 +5,38 @@ require 'spec_helper'
 require_relative '../../support/shared_examples/environment_support'
 
 describe RubyFly::Commands::Login do
+  let(:executor) { Lino::Executors::Mock.new }
+
   before do
     RubyFly.configure do |config|
       config.binary = 'path/to/binary'
     end
+    Lino.configure do |config|
+      config.executor = executor
+    end
   end
 
   after do
+    Lino.reset!
     RubyFly.reset!
   end
 
   it 'calls the fly login command passing the required arguments' do
     command = described_class.new(binary: 'fly')
 
-    allow(Open4).to(receive(:spawn))
-
     command.execute(target: 'target')
 
-    expect(Open4)
-      .to(have_received(:spawn)
-            .with('fly login ' \
-                  '-t=target',
-                  any_args))
+    expect(executor.executions.first.command_line.string)
+      .to(eq('fly login -t=target'))
   end
 
   it 'defaults to the configured binary when none provided' do
     command = described_class.new
 
-    allow(Open4).to(receive(:spawn))
-
     command.execute(target: 'target')
 
-    expect(Open4)
-      .to(have_received(:spawn)
-            .with('path/to/binary login ' \
-                  '-t=target',
-                  any_args))
+    expect(executor.executions.first.command_line.string)
+      .to(eq('path/to/binary login -t=target'))
   end
 
   it_behaves_like(
@@ -53,8 +49,6 @@ describe RubyFly::Commands::Login do
   it 'throws ArgumentError if target is missing' do
     command = described_class.new
 
-    allow(Open4).to(receive(:spawn))
-
     expect do
       command.execute
     end.to(raise_error(
@@ -66,25 +60,17 @@ describe RubyFly::Commands::Login do
   it 'uses the provided concourse URL when supplied' do
     command = described_class.new
 
-    allow(Open4).to(receive(:spawn))
-
     command.execute(
       concourse_url: 'https://concourse.example.com',
       target: 'target'
     )
 
-    expect(Open4)
-      .to(have_received(:spawn)
-            .with('path/to/binary login ' \
-                  '-t=target ' \
-                  '-c=https://concourse.example.com',
-                  any_args))
+    expect(executor.executions.first.command_line.string)
+      .to(eq('path/to/binary login -t=target -c=https://concourse.example.com'))
   end
 
   it 'uses the provided username and password when supplied' do
     command = described_class.new
-
-    allow(Open4).to(receive(:spawn))
 
     command.execute(
       concourse_url: 'https://concourse.example.com',
@@ -93,20 +79,18 @@ describe RubyFly::Commands::Login do
       password: 'super-secret'
     )
 
-    expect(Open4)
-      .to(have_received(:spawn)
-            .with('path/to/binary login ' \
-                  '-t=target ' \
-                  '-c=https://concourse.example.com ' \
-                  '-u=some-user ' \
-                  '-p=super-secret',
-                  any_args))
+    expect(executor.executions.first.command_line.string)
+      .to(eq(
+            'path/to/binary login ' \
+            '-t=target ' \
+            '-c=https://concourse.example.com ' \
+            '-u=some-user ' \
+            '-p=super-secret'
+          ))
   end
 
   it 'adds a team when supplied' do
     command = described_class.new
-
-    allow(Open4).to(receive(:spawn))
 
     command.execute(
       concourse_url: 'https://concourse.example.com',
@@ -114,12 +98,12 @@ describe RubyFly::Commands::Login do
       team: 'team'
     )
 
-    expect(Open4)
-      .to(have_received(:spawn)
-            .with('path/to/binary login ' \
-                  '-t=target ' \
-                  '-c=https://concourse.example.com ' \
-                  '-n=team',
-                  any_args))
+    expect(executor.executions.first.command_line.string)
+      .to(eq(
+            'path/to/binary login ' \
+            '-t=target ' \
+            '-c=https://concourse.example.com ' \
+            '-n=team'
+          ))
   end
 end

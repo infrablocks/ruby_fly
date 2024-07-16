@@ -61,7 +61,7 @@ module RubyFly
 
     def initialize
       @binary = 'fly'
-      @stdin = ''
+      @stdin = nil
       @stdout = $stdout
       @stderr = $stderr
     end

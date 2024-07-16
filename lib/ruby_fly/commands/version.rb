@@ -6,20 +6,20 @@ require_relative 'base'
 module RubyFly
   module Commands
     class Version < Base
-      def stdout
-        @version_string
+      private
+
+      def invocation_option_defaults(_invocation_options)
+        super.merge(capture: [:stdout])
       end
 
-      def do_before(_opts)
-        @version_string = StringIO.new
-      end
-
-      def configure_command(builder, _opts)
+      def configure_command(initial_builder, _parameters)
+        builder = super
         builder.with_flag('--version')
       end
 
-      def do_after(_opts)
-        @version_string.string.gsub("\n", '')
+      def process_result(result, _parameters, _invocation_options)
+        output = result[:output]
+        output.gsub("\n", '')
       end
     end
   end

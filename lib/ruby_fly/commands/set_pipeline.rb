@@ -13,17 +13,17 @@ module RubyFly
 
       # rubocop:disable Metrics/AbcSize
       # rubocop:disable Metrics/MethodLength
-      def configure_command(builder, opts)
-        builder = super(builder, opts)
+      def configure_command(initial_builder, parameters)
+        builder = super
         builder
           .with_subcommand('set-pipeline') do |sub|
-            sub = with_target(sub, opts[:target])
-            sub = with_pipeline(sub, opts[:pipeline])
-            sub = with_config(sub, opts[:config])
-            sub = with_team(sub, opts[:team])
-            sub = with_vars(sub, opts[:vars])
-            sub = with_var_files(sub, opts[:var_files])
-            sub = with_non_interactive(sub, opts[:non_interactive])
+            sub = with_target(sub, parameters[:target])
+            sub = with_pipeline(sub, parameters[:pipeline])
+            sub = with_config(sub, parameters[:config])
+            sub = with_team(sub, parameters[:team])
+            sub = with_vars(sub, parameters[:vars])
+            sub = with_var_files(sub, parameters[:var_files])
+            sub = with_non_interactive(sub, parameters[:non_interactive])
             sub
           end
       end

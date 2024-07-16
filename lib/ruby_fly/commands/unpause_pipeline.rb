@@ -11,13 +11,13 @@ module RubyFly
       include Mixins::Environment
       include Mixins::RequiredParams
 
-      def configure_command(builder, opts)
-        builder = super(builder, opts)
+      def configure_command(initial_builder, parameters)
+        builder = super
         builder
           .with_subcommand('unpause-pipeline') do |sub|
-          sub = with_target(sub, opts[:target])
-          sub = with_pipeline(sub, opts[:pipeline])
-          sub = with_team(sub, opts[:team])
+          sub = with_target(sub, parameters[:target])
+          sub = with_pipeline(sub, parameters[:pipeline])
+          sub = with_team(sub, parameters[:team])
           sub
         end
       end

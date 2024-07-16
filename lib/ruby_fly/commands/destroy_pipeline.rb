@@ -11,19 +11,19 @@ module RubyFly
       include Mixins::Environment
       include Mixins::RequiredParams
 
-      def configure_command(builder, opts)
-        builder = super(builder, opts)
+      private
+
+      def configure_command(initial_builder, parameters)
+        builder = super
         builder
           .with_subcommand('destroy-pipeline') do |sub|
-          sub = with_target(sub, opts[:target])
-          sub = with_pipeline(sub, opts[:pipeline])
-          sub = with_team(sub, opts[:team])
-          sub = with_non_interactive(sub, opts[:non_interactive])
+          sub = with_target(sub, parameters[:target])
+          sub = with_pipeline(sub, parameters[:pipeline])
+          sub = with_team(sub, parameters[:team])
+          sub = with_non_interactive(sub, parameters[:non_interactive])
           sub
         end
       end
-
-      private
 
       def required_params
         %i[target pipeline]

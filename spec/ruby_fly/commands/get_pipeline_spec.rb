@@ -5,50 +5,44 @@ require 'spec_helper'
 require_relative '../../support/shared_examples/environment_support'
 
 describe RubyFly::Commands::GetPipeline do
+  let(:executor) { Lino::Executors::Mock.new }
+
   before do
     RubyFly.configure do |config|
       config.binary = 'path/to/binary'
     end
+    Lino.configure do |config|
+      config.executor = executor
+    end
   end
 
   after do
+    Lino.reset!
     RubyFly.reset!
   end
 
   it 'calls the fly get-pipeline command passing the required arguments' do
     command = described_class.new(binary: 'fly')
 
-    allow(Open4).to(receive(:spawn))
-
     command.execute(
       target: 'target',
       pipeline: 'pipeline'
     )
 
-    expect(Open4)
-      .to(have_received(:spawn)
-            .with('fly get-pipeline ' \
-                  '-t=target ' \
-                  '-p=pipeline',
-                  any_args))
+    expect(executor.executions.first.command_line.string)
+      .to(eq('fly get-pipeline -t=target -p=pipeline'))
   end
 
   it 'defaults to the configured binary when none provided' do
     command = described_class.new
 
-    allow(Open4).to(receive(:spawn))
-
     command.execute(
       target: 'target',
       pipeline: 'pipeline'
     )
 
-    expect(Open4)
-      .to(have_received(:spawn)
-            .with('path/to/binary get-pipeline ' \
-                  '-t=target ' \
-                  '-p=pipeline',
-                  any_args))
+    expect(executor.executions.first.command_line.string)
+      .to(eq('path/to/binary get-pipeline -t=target -p=pipeline'))
   end
 
   it_behaves_like(
@@ -61,8 +55,6 @@ describe RubyFly::Commands::GetPipeline do
 
   it 'throws ArgumentError if target or pipeline are missing' do
     command = described_class.new
-    allow(Open4).to(receive(:spawn))
-
     %i[target pipeline].each do |required_parameter|
       expect do
         parameters = {

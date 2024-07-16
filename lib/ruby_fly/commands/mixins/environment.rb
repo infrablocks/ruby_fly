@@ -5,7 +5,7 @@ module RubyFly
     module Mixins
       module Environment
         def initialize(opts = {})
-          super(opts)
+          super
           @environment = opts[:environment]
         end
 
@@ -14,9 +14,9 @@ module RubyFly
           self
         end
 
-        def configure_command(builder, opts)
-          builder = super(builder, opts)
-          environment = opts[:environment] || @environment
+        def configure_command(initial_builder, parameters)
+          builder = super
+          environment = parameters[:environment] || @environment
           if environment
             builder =
               environment.to_a.inject(builder) do |b, environment_variable|

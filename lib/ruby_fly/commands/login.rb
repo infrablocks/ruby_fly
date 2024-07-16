@@ -11,15 +11,15 @@ module RubyFly
       include Mixins::Environment
       include Mixins::RequiredParams
 
-      def configure_command(builder, opts)
-        builder = super(builder, opts)
+      def configure_command(initial_builder, parameters)
+        builder = super
         builder
           .with_subcommand('login') do |sub|
-            sub = with_target(sub, opts[:target])
-            sub = with_concourse_url(sub, opts[:concourse_url])
-            sub = with_username(sub, opts[:username])
-            sub = with_password(sub, opts[:password])
-            sub = with_team(sub, opts[:team])
+            sub = with_target(sub, parameters[:target])
+            sub = with_concourse_url(sub, parameters[:concourse_url])
+            sub = with_username(sub, parameters[:username])
+            sub = with_password(sub, parameters[:password])
+            sub = with_team(sub, parameters[:team])
             sub
           end
       end

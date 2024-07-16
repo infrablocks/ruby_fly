@@ -59,7 +59,7 @@ module RubyFly
       def bearer_token=(value)
         @token = {
           type: 'bearer',
-          value: value
+          value:
         }
       end
 
@@ -103,7 +103,7 @@ module RubyFly
       contents = options[:contents] || try_load_rc_file_contents(path) || {}
       targets = try_load_rc_file_targets(path, contents) || []
 
-      RubyFly::RC.new(home: home, name: name, targets: targets)
+      RubyFly::RC.new(home:, name:, targets:)
     end
 
     class << self
